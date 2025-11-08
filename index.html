@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZHARVAN - Izhardev </title>
+
+    <style>
+        /* Reset dasar dan font modern */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* Background gradien yang sama */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            /* Pusatkan konten utama */
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            /* Tambahkan padding-bottom agar footer tidak menutupi konten */
+            padding-bottom: 80px;
+        }
+
+        /* --- 1. CSS Preloader (Intro) --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: grid;
+            place-items: center;
+            color: white;
+            /* Transisi untuk 'slide up' saat menghilang */
+            transition: transform 0.8s cubic-bezier(0.86, 0, 0.07, 1), opacity 0.8s ease-out;
+            opacity: 1;
+            transform: translateY(0%);
+        }
+
+        /* Kelas .hidden untuk memicu transisi slide-up */
+        #preloader.hidden {
+            opacity: 0.5;
+            transform: translateY(-100%); /* Geser ke atas hingga hilang */
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-text {
+            /* Font responsif: min 2.5rem, ideal 8vw, max 3.5rem */
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: 1px;
+            /* Animasi fade-in sederhana untuk teks */
+            animation: fadeInText 1.2s ease-in-out;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* --- Akhir CSS Preloader --- */
+
+
+        /* --- 2. CSS Konten Utama (Kartu Kontak) --- */
+        main.contact-card {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.125);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            padding: 2.5rem;
+            color: white;
+
+            /* Sembunyikan konten pada awalnya */
+            opacity: 0;
+            transform: translateY(20px);
+            
+            /* Transisi untuk fade-in + slide-up konten */
+            /* PENTING: delay 0.7s agar dimulai SETELAH preloader mulai menghilang */
+            transition: opacity 0.6s ease-out 0.7s, transform 0.6s ease-out 0.7s;
+        }
+        
+        /* Tampilkan konten saat body.loaded */
+        body.loaded main.contact-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        #contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-item {
+            display: block;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 18px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .contact-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .contact-number {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        #loading-message {
+            text-align: center;
+            opacity: 0.8;
+        }
+        /* --- Akhir CSS Konten Utama --- */
+
+
+        /* --- 3. CSS Footer (Watermark & Contact Dev) --- */
+        .site-footer {
+            position: fixed; /* Selalu menempel di bawah */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Jarak antara watermark dan link dev */
+            
+            color: white;
+            font-size: 0.8rem;
+            
+            /* Sembunyikan footer pada awalnya */
+            opacity: 0;
+            /* Transisi fade-in, disamakan dengan konten (delay 0.7s) */
+            transition: opacity 0.6s ease-out 0.7s;
+        }
+
+        /* Tampilkan footer saat body.loaded */
+        body.loaded .site-footer {
+            opacity: 0.7; /* Dibuat sedikit transparan agar tidak terlalu mencolok */
+        }
+
+        .site-footer .watermark-text {
+            /* Tidak perlu style khusus, mewarisi .site-footer */
+        }
+
+        .site-footer .dev-contact-link {
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .site-footer .dev-contact-link:hover {
+            opacity: 1;
+            border-bottom-color: white;
+        }
+        /* --- Akhir CSS Footer --- */
+
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-content">
+            <h1 class="loader-text">Welcome to Zharvana Code</h1>
+        </div>
+    </div>
+
+    <main class="contact-card">
+        <h1>Kontak WhatsApp</h1>
+        <div id="contact-list">
+            <p id="loading-message">Memuat kontak...</p>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <span class="watermark-text">INV_Tech from Izhardev</span>
+        <a href="https://instagram.com/izhardev" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="dev-contact-link">
+           Contact Dev
+        </a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const preloader = document.getElementById('preloader');
+            const body = document.body;
+            
+            // Atur waktu tayang intro (misal 1.5 detik)
+            const introDuration = 1500; // 1.5 detik
+
+            setTimeout(() => {
+                // 1. Sembunyikan preloader (memicu transisi slide-up)
+                if (preloader) {
+                    preloader.classList.add('hidden');
+                }
+                
+                // 2. Tandai body sebagai 'loaded' 
+                //    (memicu transisi fade-in untuk konten dan footer)
+                body.classList.add('loaded');
+                
+                // 3. Panggil fungsi untuk memuat data JSON
+                fetchContacts();
+
+                // 4. Hapus preloader dari DOM setelah transisinya selesai (0.8s)
+                //    Ini opsional, tapi bagus untuk kebersihan DOM
+                setTimeout(() => {
+                    if (preloader) {
+                        preloader.remove();
+                    }
+                }, 800); 
+
+            }, introDuration);
+        });
+
+        // Fungsi untuk mengambil dan menampilkan kontak (Sama seperti sebelumnya)
+        async function fetchContacts() {
+            const contactList = document.getElementById('contact-list');
+            const loadingMessage = document.getElementById('loading-message');
+
+            try {
+                const response = await fetch('contacts.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const contacts = await response.json();
+
+                loadingMessage.style.display = 'none';
+
+                contacts.forEach(contact => {
+                    const link = document.createElement('a');
+                    link.className = 'contact-item';
+                    
+                    const waNumber = formatWANumber(contact.nomor);
+                    link.href = `https://wa.me/${waNumber}`;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'contact-name';
+                    nameDiv.textContent = contact.nama;
+
+                    const numberDiv = document.createElement('div');
+                    numberDiv.className = 'contact-number';
+                    numberDiv.textContent = contact.nomor;
+
+                    link.appendChild(nameDiv);
+                    link.appendChild(numberDiv);
+                    contactList.appendChild(link);
+                });
+
+            } catch (error) {
+                console.error('Gagal memuat kontak:', error);
+                loadingMessage.textContent = 'Gagal memuat kontak.';
+                loadingMessage.style.color = '#ffcdd2';
+            }
+        }
+
+        // Fungsi format nomor (Sama seperti sebelumnya)
+        function formatWANumber(number) {
+            let cleanNumber = String(number).replace(/[\s-()]/g, '');
+            if (cleanNumber.startsWith('+')) {
+                return cleanNumber.substring(1);
+            }
+            if (cleanNumber.startsWith('0')) {
+                return '62' + cleanNumber.substring(1);
+            }
+            if (!cleanNumber.startsWith('62')) {
+                return '62' + cleanNumber;
+            }
+            return cleanNumber;
+        }
+    </script>
+
+</body>
+</html>
